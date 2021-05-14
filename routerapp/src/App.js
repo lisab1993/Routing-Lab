@@ -14,8 +14,12 @@ class App extends React.Component {
     super(props);
     this.state = {
       textBox: '',
-      complete: [],
-      incomplete: [],
+      list: [
+        {
+          name: '',
+          complete: true
+        }
+      ]
     };
 
     this.handleChange = this.handleChange.bind(this)
@@ -24,18 +28,30 @@ class App extends React.Component {
 
   handleChange(event) {
     this.setState({ textBox: event.target.value })
+    // console.log(this.state)
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    
-    alert('An item was submitted: ' + this.state.textBox)
+    this.setState({ list: [{ name: this.state.textBox, complete: false }, ...this.state.list] })
+    document.getElementById('textInput').value = ''
   }
 
-
   render() {
+    console.log(this.state)
     return (
       <div className="App">
+
+        {/* Form to add items */}
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            New Todo Item:
+          <input type="text" id='textInput' value={this.state.value} onChange={this.handleChange} />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+
+        {/* Navigation */}
         <Router>
           <nav>
             <button>
@@ -51,39 +67,49 @@ class App extends React.Component {
 
           <Switch>
             <Route path="/todo">
-              <Todo />
+              {/* Use props to pass the state to the components */}
+              <Todo list={this.state.list} />
             </Route>
             <Route path="/all">
-              <All />
+              <All list={this.state.list} />
             </Route>
             <Route path="/done">
-              <Done />
+              <Done list={this.state.list} />
             </Route>
           </Switch>
         </Router>
 
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            New Todo Item:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+        {/* Display items */}
+        {/* <div>
+          {this.state.list.map((element) => (
+            <div key={element.name}>{element.name}</div>
+          ))}
+        </div> */}
       </div>
     );
   }
 
 }
 
-function Done() {
-  return <h2>Done</h2>;
+function Done(props) {
+  return <div>
+    <h1>Completed Items</h1>
+    {props.list.filter(e =>
+      <div>{e.complete} === true</div>)}
+  </div>
 }
 
-function Todo() {
-  return <h2>Todo</h2>;
+function Todo(props) {
+  return <div>
+    <h1>Incomplete Items</h1>
+    {props.list.map(e => <div>{e.name}</div>)}</div>
 }
 
-function All() {
-  return <h2>All</h2>;
+function All(props) {
+  return <div>
+    <h1>All Items</h1>
+    {props.list.map(e => <div>{e.name}</div>)}</div>
 }
+
+
 export default App;
