@@ -17,7 +17,7 @@ class App extends React.Component {
       list: [
         {
           name: '',
-          complete: true
+          complete: '',
         }
       ]
     };
@@ -33,7 +33,7 @@ class App extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({ list: [{ name: this.state.textBox, complete: false }, ...this.state.list] })
+    this.setState({ list: [{ name: this.state.textBox, complete: 'true' }, ...this.state.list] })
     document.getElementById('textInput').value = ''
   }
 
@@ -70,9 +70,11 @@ class App extends React.Component {
               {/* Use props to pass the state to the components */}
               <Todo list={this.state.list} />
             </Route>
+
             <Route path="/all">
               <All list={this.state.list} />
             </Route>
+
             <Route path="/done">
               <Done list={this.state.list} />
             </Route>
@@ -92,23 +94,38 @@ class App extends React.Component {
 }
 
 function Done(props) {
-  return <div>
-    <h1>Completed Items</h1>
-    {props.list.filter(e =>
-      <div>{e.complete} === true</div>)}
-  </div>
+  return (
+    <div>
+      <h1>Completed Items</h1>
+      {props.list.filter(item => item.complete === 'true').map((item, index) => {
+        return (
+          <>
+            {item.name}
+          </>
+        )
+      })}
+    </div>
+  )
 }
+
 
 function Todo(props) {
   return <div>
     <h1>Incomplete Items</h1>
-    {props.list.map(e => <div>{e.name}</div>)}</div>
+  </div>
 }
 
 function All(props) {
-  return <div>
-    <h1>All Items</h1>
-    {props.list.map(e => <div>{e.name}</div>)}</div>
+  return (
+    <div>
+      <h1>All Items</h1>
+      {props.list.map((item, index) => {
+        return (
+          <div key={index}>{item.name}</div>
+       )
+      })}
+    </div>
+  )
 }
 
 
